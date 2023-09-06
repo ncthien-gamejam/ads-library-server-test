@@ -45,7 +45,7 @@ async function createAdData()
   
   let ret = {};
   ret["content"] = adStringFinal;
-  ret["meta"] = meta;
+  ret["metadata"] = meta;
   
   return ret;
 }
