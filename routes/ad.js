@@ -61,7 +61,7 @@ function getUniqueId()
     return ret;
 }
 
-router.get('/', async function(req, res, next) {
+router.post('/', async function(req, res, next) {
   try {
     let ret = {}
     
