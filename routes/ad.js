@@ -5,9 +5,15 @@ var fsp = require('fs/promises');
 
 const minify = require("html-minifier").minify;
 
-async function createAdData()
+async function createAdData(adUnitId)
 {
-  const adData = await fsp.readFile('./data/banner.html');
+  let filename = '';
+  
+  if (adUnitId.includes("banner")) filename = 'banner.html';
+  else if (adUnitId.includes("interstitial")) filename = 'interstitial.html';
+  else if (adUnitId.includes("rewarded")) filename = 'rewarded.html';
+  
+  const adData = await fsp.readFile('./data/' + filename);
   const adString = adData.toString();
   
   const adStringFinal = minify(adString, {
@@ -52,17 +58,20 @@ async function createAdData()
 
 function getUniqueId()
 {
-    if (typeof getUniqueId.counter == 'undefined' )
-    {
-        getUniqueId.counter = 0;
-    }
+  if (typeof getUniqueId.counter == 'undefined' )
+  {
+      getUniqueId.counter = 0;
+  }
 
-    let ret = ++getUniqueId.counter;
-    return ret;
+  let ret = ++getUniqueId.counter;
+  return ret;
 }
 
 router.post('/', async function(req, res, next) {
   try {
+    let body = req.body;
+    let adUnitId = body["ad-unit-id"];
+    
     let ret = {}
     
     let requestId = getUniqueId();
@@ -70,7 +79,7 @@ router.post('/', async function(req, res, next) {
     ret["request-id"] = requestId;
     
     let adResponses = [];
-    adResponses.push(await createAdData());
+    adResponses.push(await createAdData(adUnitId));
     
     ret["ad-responses"] = adResponses;
     
