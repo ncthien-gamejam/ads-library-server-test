@@ -9,9 +9,11 @@ async function createAdData(adUnitId)
 {
   let filename = '';
   
-  if (adUnitId.includes("banner")) filename = 'banner.html';
-  else if (adUnitId.includes("interstitial")) filename = 'interstitial.html';
-  else if (adUnitId.includes("rewarded")) filename = 'rewarded.html';
+  let lowerUnitId = adUnitId.toLowerCase();
+  
+  if (lowerUnitId.includes("banner")) filename = 'banner.html';
+  else if (lowerUnitId.includes("interstitial")) filename = 'interstitial.html';
+  else if (lowerUnitId.includes("rewarded")) filename = 'rewarded.html';
   
   const adData = await fsp.readFile('./data/' + filename);
   const adString = adData.toString();
