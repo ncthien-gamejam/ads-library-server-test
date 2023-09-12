@@ -9,6 +9,8 @@ const clickRouter = require("./routes/click");
 const impressionRouter = require("./routes/impression");
 const rewardedCompleteRouter = require("./routes/rewardedComplete");
 
+app.enable('trust proxy');
+
 app.use(express.json());
 
 app.use(
