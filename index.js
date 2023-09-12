@@ -5,6 +5,10 @@ const port = process.env.PORT || 3001;
 
 const adRouter = require("./routes/ad");
 
+const clickRouter = require("./routes/click");
+const impressionRouter = require("./routes/impression");
+const rewardedCompleteRouter = require("./routes/rewardedComplete");
+
 app.use(express.json());
 
 app.use(
@@ -16,6 +20,10 @@ app.use(
 app.get("/", (req, res) => res.type('html').send(html));
 
 app.use("/ad", adRouter);
+
+app.use("/click", clickRouter);
+app.use("/impression", impressionRouter);
+app.use("/rewardedComplete", rewardedCompleteRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

@@ -5,15 +5,28 @@ var fsp = require('fs/promises');
 
 const minify = require("html-minifier").minify;
 
-async function createAdData(adUnitId)
+function createClickUrl(baseUrl, requestId)
+{
+  return baseUrl + "/click?request_id=" + requestId;
+}
+
+function createImpressionUrl(baseUrl, requestId)
+{
+  return baseUrl + "/impression?request_id=" + requestId;
+}
+
+function createRewardedAdCompletionUrl(baseUrl, requestId)
+{
+  return baseUrl + "/rewarded_complete?request_id=" + requestId;
+}
+
+async function createAdData(adFormat, adUnitId, baseUrl, requestId)
 {
   let filename = '';
   
-  let lowerUnitId = adUnitId.toLowerCase();
-  
-  if (lowerUnitId.includes("banner")) filename = 'banner.html';
-  else if (lowerUnitId.includes("interstitial")) filename = 'interstitial.html';
-  else if (lowerUnitId.includes("rewarded")) filename = 'rewarded.html';
+  if (adFormat === "banner") filename = 'banner.html';
+  else if (adFormat === "interstitial") filename = 'interstitial.html';
+  else if (adFormat === "rewarded_ad") filename = 'rewarded.html';
   
   const adData = await fsp.readFile('./data/' + filename);
   const adString = adData.toString();
@@ -24,10 +37,60 @@ async function createAdData(adUnitId)
     minifyJS: true
   });
   
-  let clickUrls = [];
-  let impressionUrls = [];
+  
+  let clickUrls = [createClickUrl(baseUrl, requestId)];
+  let impressionUrls = [createImpressionUrl(baseUrl, requestId)];
   
   let meta = {};
+    
+  if (adFormat == "interstitial")
+  {
+    let settings = {};
+    settings['max-exp-time']=0;
+    settings['min-time']=5000;
+    settings['countdown-timer-delay']=0;
+    settings['show-countdown-timer']=true;
+    
+    let endCard = {}
+    endCard['static-min-time']=0;
+    endCard['interactive-min-time']=0;
+    endCard['static-duration']=0;
+    endCard['interactive-duration']=0;
+    endCard['countdown-timer-delay']=0;
+    endCard['show-countdown-timer']=true;
+    
+    settings['end-card']=endCard;
+    
+    meta['ad-settings'] = settings;
+  }
+  else if (adFormat == "rewarded_ad")
+  {
+    let settings = {};
+    settings['max-exp-time']=0;
+    settings['min-time']=30000;
+    settings['countdown-timer-delay']=0;
+    settings['show-countdown-timer']=true;
+    
+    let endCard = {}
+    endCard['static-min-time']=0;
+    endCard['interactive-min-time']=0;
+    endCard['static-duration']=5000;
+    endCard['interactive-duration']=10000;
+    endCard['countdown-timer-delay']=0;
+    endCard['show-countdown-timer']=true;
+    
+    settings['end-card']=endCard;
+    
+    meta['ad-settings'] = settings;
+    
+    let reward = {};
+    reward['completion-url'] = createRewardedAdCompletionUrl(baseUrl, requestId);
+    reward['item'] = 'gem';
+    reward['amount'] = 100;
+    
+    meta['ad-reward'] = reward;
+  }
+  
   meta["network-type"] = "superfine";
   meta["ad-type"] = "html";
   meta["ad-group-id"] = "AD_GROUP_ID_TEST";
@@ -41,17 +104,34 @@ async function createAdData(adUnitId)
   meta["width"] = 468;
   meta["height"] = 60;
   
-  if (clickUrls.length > 0)
+  let numClickUrls = clickUrls.length;
+  if (numClickUrls > 0)
   {
-    meta["click-urls"] = clickUrls;
+    if (numClickUrls == 1)
+    {
+      meta["click-url"] = clickUrls[0];
+    }
+    else
+    {
+      meta["click-urls"] = clickUrls;
+    }
   }
   
-  if (impressionUrls.length > 0)
+  let numImpressionUrls = impressionUrls.length;
+  if (numImpressionUrls > 0)
   {
-    meta["impression-urls"] = impressionUrls;
+    if (numImpressionUrls == 1)
+    {
+      meta["impression-url"] = impressionUrls[0];
+    }
+    else
+    {
+      meta["impression-urls"] = impressionUrls;
+    }
   }
   
   let ret = {};
+  
   ret["content"] = adStringFinal;
   ret["metadata"] = meta;
   
@@ -72,7 +152,11 @@ function getUniqueId()
 router.post('/', async function(req, res, next) {
   try {
     let body = req.body;
+    
+    let adFormat = body["ad-format"];
     let adUnitId = body["ad-unit-id"];
+    
+    let baseUrl = req.protocol + '://' + req.get('host');
     
     let ret = {}
     
@@ -81,7 +165,7 @@ router.post('/', async function(req, res, next) {
     ret["request-id"] = requestId;
     
     let adResponses = [];
-    adResponses.push(await createAdData(adUnitId));
+    adResponses.push(await createAdData(adFormat, adUnitId, baseUrl, requestId));
     
     ret["ad-responses"] = adResponses;
     
