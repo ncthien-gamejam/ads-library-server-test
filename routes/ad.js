@@ -67,7 +67,7 @@ async function createAdData(adFormat, adUnitId, baseUrl, requestId)
   {
     let settings = {};
     settings['max-exp-time']=0;
-    settings['min-time']=30000;
+    settings['min-time']=10000;
     settings['countdown-timer-delay']=0;
     settings['show-countdown-timer']=true;
     
