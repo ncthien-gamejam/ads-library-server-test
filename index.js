@@ -25,7 +25,7 @@ app.use("/ad", adRouter);
 
 app.use("/click", clickRouter);
 app.use("/impression", impressionRouter);
-app.use("/rewardedComplete", rewardedCompleteRouter);
+app.use("/rewarded_complete", rewardedCompleteRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
