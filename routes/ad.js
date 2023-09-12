@@ -169,6 +169,47 @@ router.post('/', async function(req, res, next) {
     
     ret["ad-responses"] = adResponses;
     
+    if (adFormat == "interstitial")
+    {
+      let settings = {};
+      settings['max-exp-time']=0;
+      settings['min-time']=0;
+      settings['countdown-timer-delay']=0;
+      settings['show-countdown-timer']=true;
+      
+      let endCard = {}
+      endCard['static-min-time']=0;
+      endCard['interactive-min-time']=0;
+      endCard['static-duration']=0;
+      endCard['interactive-duration']=0;
+      endCard['countdown-timer-delay']=0;
+      endCard['show-countdown-timer']=true;
+      
+      settings['end-card']=endCard;
+      
+      ret['ad-settings'] = settings;
+    }
+    else if (adFormat == "rewarded_ad")
+    {
+      let settings = {};
+      settings['max-exp-time']=0;
+      settings['min-time']=10000;
+      settings['countdown-timer-delay']=0;
+      settings['show-countdown-timer']=true;
+      
+      let endCard = {}
+      endCard['static-min-time']=0;
+      endCard['interactive-min-time']=0;
+      endCard['static-duration']=5000;
+      endCard['interactive-duration']=10000;
+      endCard['countdown-timer-delay']=0;
+      endCard['show-countdown-timer']=true;
+      
+      settings['end-card']=endCard;
+      
+      ret['ad-settings'] = settings;
+    }
+    
     res.json(ret);
   } catch (err) {
     console.error(`Error while processing ad request `, err.message);
