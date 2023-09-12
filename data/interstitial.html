@@ -614,6 +614,11 @@
               super(a => {
                 var b = this.g[this.h];
                 if (!b) {
+                  if (a.messageName === 'open')
+                  {
+                    window.location.href = a.parameters.u;
+                  }
+                
                   var c = document;
                   b = "IFRAME";
                   "application/xhtml+xml" === c.contentType && (b = b.toLowerCase());
