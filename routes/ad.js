@@ -45,8 +45,8 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   {
     filename = 'banner.html';
     
-    width = 468;
-    height = 60;
+    width = 320;
+    height = 41;
     
     loadTimeout = 10000; //ms (10s)
   }
