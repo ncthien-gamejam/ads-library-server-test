@@ -7,27 +7,88 @@ const minify = require("html-minifier").minify;
 
 function createClickUrl(baseUrl, requestId)
 {
-  return baseUrl + "/click?request_id=" + requestId;
+  return baseUrl + "/click?id=" + requestId;
 }
 
 function createImpressionUrl(baseUrl, requestId)
 {
-  return baseUrl + "/impression?request_id=" + requestId;
+  return baseUrl + "/impression?id=" + requestId;
 }
 
 function createRewardedAdCompletionUrl(baseUrl, requestId)
 {
-  return baseUrl + "/rewarded_complete?request_id=" + requestId;
+  return baseUrl + "/rewarded_complete?id=" + requestId;
 }
 
-async function createAdData(adFormat, adUnitId, baseUrl, requestId)
+function createBeforeLoadUrl(baseUrl, requestId)
 {
+  return baseUrl + "/before_load?id=" + requestId;
+}
+
+function createAfterLoadUrl(baseUrl, requestId)
+{
+  return baseUrl + "/after_load?id=" + requestId + "&duration=%%LOAD_DURATION%%&result=%%LOAD_RESULT%%";
+}
+
+async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
+{
+  let width = 0;
+  let height = 0;
+  
+  let orientation = requestBody['orientation'];
+  
   let filename = '';
   
-  if (adFormat === "banner") filename = 'banner.html';
-  else if (adFormat === "interstitial") filename = 'interstitial.html';
-  else if (adFormat === "rewarded_ad") filename = 'rewarded.html';
+  let loadTimeout = 0;
   
+  if (adFormat === "banner")
+  {
+    filename = 'banner.html';
+    
+    width = 468;
+    height = 60;
+    
+    loadTimeout = 10000; //ms (10s)
+  }
+  else if (adFormat === "interstitial")
+  {
+    filename = 'interstitial.html';
+    
+    width = requestBody['width'];
+    height = requestBody['height'];
+    
+    loadTimeout = 30000; //ms (30s)
+  }
+  else if (adFormat === "rewarded_ad")
+  {
+    filename = 'rewarded.html';
+    
+    width = requestBody['width'];
+    height = requestBody['height'];
+    
+    loadTimeout = 30000; //ms (30s)
+  }
+  
+  let adType = 'html';
+  
+  let adGroupId = "AD_GROUP_ID_TEST";
+  let creativeId = "CREATIVE_ID_TEST";
+  
+  let networkName = "superfine";
+  
+  let networkPlacementId = "NETWORK_PLACEMENT_ID_TEST";
+  
+  let userSegment = "default";
+  
+  let country = "US"; //ISO 3166-1 alpha-2
+  let currency = "USD"; //ISO 4217
+  
+  let revenue = 0.01;
+  
+  let precisionType = "estimated";
+  
+  let demandPartnerData = {'encrypted_cpm': 'test_cpm'};
+ 
   const adData = await fsp.readFile('./data/' + filename);
   const adString = adData.toString();
   
@@ -36,84 +97,78 @@ async function createAdData(adFormat, adUnitId, baseUrl, requestId)
     removeComments: true,
     minifyJS: true
   });
-  
-  
+    
   let clickUrls = [createClickUrl(baseUrl, requestId)];
   let impressionUrls = [createImpressionUrl(baseUrl, requestId)];
   
+  let beforeLoadUrls = [createBeforeLoadUrl(baseUrl, requestId)];
+  let afterLoadUrls = [createAfterLoadUrl(baseUrl, requestId)];
+  
   let meta = {};
     
-  if (adFormat == "interstitial")
+  if (adFormat == "rewarded_ad")
   {
-    let settings = {};
-    settings['max-exp-time']=0;
-    settings['min-time']=5000;
-    settings['countdown-timer-delay']=0;
-    settings['show-countdown-timer']=true;
+    let rewardSettings = {};
+    rewardSettings['completion_url'] = createRewardedAdCompletionUrl(baseUrl, requestId);
+    rewardSettings['item'] = 'gem';
+    rewardSettings['amount'] = 100;
     
-    let endCard = {}
-    endCard['static-min-time']=0;
-    endCard['interactive-min-time']=0;
-    endCard['static-duration']=0;
-    endCard['interactive-duration']=0;
-    endCard['countdown-timer-delay']=0;
-    endCard['show-countdown-timer']=true;
-    
-    settings['end-card']=endCard;
-    
-    meta['ad-settings'] = settings;
+    meta['rewarded_settings'] = rewardSettings;
   }
-  else if (adFormat == "rewarded_ad")
+  else if (adFormat == "banner")
   {
-    let settings = {};
-    settings['max-exp-time']=0;
-    settings['min-time']=10000;
-    settings['countdown-timer-delay']=0;
-    settings['show-countdown-timer']=true;
+    let bannerSettings = {};
+    bannerSettings['impression_min_pixels'] = 10000; //dips
+    bannerSettings['impression_min_time'] = 3000; //ms (3s)
+    bannerSettings["refresh_time"] = 60 * 1000; //ms (1m)
     
-    let endCard = {}
-    endCard['static-min-time']=0;
-    endCard['interactive-min-time']=0;
-    endCard['static-duration']=5000;
-    endCard['interactive-duration']=10000;
-    endCard['countdown-timer-delay']=0;
-    endCard['show-countdown-timer']=true;
-    
-    settings['end-card']=endCard;
-    
-    meta['ad-settings'] = settings;
-    
-    let reward = {};
-    reward['completion-url'] = createRewardedAdCompletionUrl(baseUrl, requestId);
-    reward['item'] = 'gem';
-    reward['amount'] = 100;
-    
-    meta['ad-reward'] = reward;
+    meta['banner_settings'] = bannerSettings;
   }
   
-  meta["network-type"] = "superfine";
-  meta["ad-type"] = "html";
-  meta["ad-group-id"] = "AD_GROUP_ID_TEST";
-  meta["dsp-creative-id"] = "CREATIVE_ID_TEST";
+  meta["ad_type"] = adType;
   
-  meta["refresh-time"] = 60 * 1000; //ms (1m)
+  meta["ad_group_id"] = adGroupId;
+  meta["creative_id"] = creativeId;
+  meta["network_name"] = networkName;
   
-  meta["ad-timeout"] = 30 * 1000; //ms (30s)
+  meta["load_timeout"] = loadTimeout;
   
-  meta["orientation"] = "portrait";
-  meta["width"] = 468;
-  meta["height"] = 60;
+  meta["orientation"] = orientation;
+  meta["width"] = width;
+  meta["height"] = height;
+  
+  let impressionData = {};
+  
+  impressionData["id"] = requestId;
+  impressionData["ad_unit_id"] = adUnitId;
+  impressionData["ad_group_id"] = adGroupId;
+  
+  impressionData["network_name"] = networkName;
+  impressionData["network_placement_id"] = networkPlacementId;
+  
+  impressionData["user_segment"] = userSegment;
+  
+  impressionData["country"] = country;
+  impressionData["currency"] = currency;
+  
+  impressionData["precision_type"] = precisionType;
+  
+  impressionData["revenue"] = revenue;
+  
+  impressionData["demand_partner_data"] = demandPartnerData;
+  
+  meta["impression_data"] = impressionData;
   
   let numClickUrls = clickUrls.length;
   if (numClickUrls > 0)
   {
     if (numClickUrls == 1)
     {
-      meta["click-url"] = clickUrls[0];
+      meta["click_url"] = clickUrls[0];
     }
     else
     {
-      meta["click-urls"] = clickUrls;
+      meta["click_urls"] = clickUrls;
     }
   }
   
@@ -122,11 +177,37 @@ async function createAdData(adFormat, adUnitId, baseUrl, requestId)
   {
     if (numImpressionUrls == 1)
     {
-      meta["impression-url"] = impressionUrls[0];
+      meta["impression_url"] = impressionUrls[0];
     }
     else
     {
-      meta["impression-urls"] = impressionUrls;
+      meta["impression_urls"] = impressionUrls;
+    }
+  }
+  
+  let numBeforeLoadUrls = beforeLoadUrls.length;
+  if (numBeforeLoadUrls > 0)
+  {
+    if (numBeforeLoadUrls == 1)
+    {
+      meta["before_load_url"] = beforeLoadUrls[0];
+    }
+    else
+    {
+      meta["before_load_urls"] = beforeLoadUrls;
+    }
+  }
+  
+  let numAfterLoadUrls = afterLoadUrls.length;
+  if (numAfterLoadUrls > 0)
+  {
+    if (numAfterLoadUrls == 1)
+    {
+      meta["after_load_url"] = afterLoadUrls[0];
+    }
+    else
+    {
+      meta["after_load_urls"] = afterLoadUrls;
     }
   }
   
@@ -153,8 +234,8 @@ router.post('/', async function(req, res, next) {
   try {
     let body = req.body;
     
-    let adFormat = body["ad-format"];
-    let adUnitId = body["ad-unit-id"];
+    let adFormat = body["ad_format"];
+    let adUnitId = body["ad_unit_id"];
     
     let baseUrl = req.protocol + '://' + req.get('host');
     
@@ -162,52 +243,52 @@ router.post('/', async function(req, res, next) {
     
     let requestId = getUniqueId();
     
-    ret["request-id"] = requestId;
+    ret["request_id"] = requestId;
     
     let adResponses = [];
-    adResponses.push(await createAdData(adFormat, adUnitId, baseUrl, requestId));
+    adResponses.push(await createAdData(body, adFormat, adUnitId, baseUrl, requestId));
     
-    ret["ad-responses"] = adResponses;
+    ret["ad_responses"] = adResponses;
     
     if (adFormat == "interstitial")
     {
       let settings = {};
-      settings['max-exp-time']=0;
-      settings['min-time']=0;
-      settings['countdown-timer-delay']=0;
-      settings['show-countdown-timer']=true;
+      settings['max_exp_time']=0;
+      settings['min_time']=0;
+      settings['countdown_timer_delay']=0;
+      settings['show_countdown_timer']=true;
       
       let endCard = {}
-      endCard['static-min-time']=0;
-      endCard['interactive-min-time']=0;
-      endCard['static-duration']=0;
-      endCard['interactive-duration']=0;
-      endCard['countdown-timer-delay']=0;
-      endCard['show-countdown-timer']=true;
+      endCard['static_min_time']=0;
+      endCard['interactive_min_time']=0;
+      endCard['static_duration']=0;
+      endCard['interactive_duration']=0;
+      endCard['countdown_timer_delay']=0;
+      endCard['show_countdown_timer']=true;
       
-      settings['end-card']=endCard;
+      settings['end_card']=endCard;
       
-      ret['ad-settings'] = settings;
+      ret['ad_settings'] = settings;
     }
     else if (adFormat == "rewarded_ad")
     {
       let settings = {};
-      settings['max-exp-time']=0;
-      settings['min-time']=10000;
-      settings['countdown-timer-delay']=0;
-      settings['show-countdown-timer']=true;
+      settings['max_exp_time']=0;
+      settings['min_time']=10000;
+      settings['countdown_timer_delay']=0;
+      settings['show_countdown_timer']=true;
       
       let endCard = {}
-      endCard['static-min-time']=0;
-      endCard['interactive-min-time']=0;
-      endCard['static-duration']=5000;
-      endCard['interactive-duration']=10000;
-      endCard['countdown-timer-delay']=0;
-      endCard['show-countdown-timer']=true;
+      endCard['static_min_time']=0;
+      endCard['interactive_min_time']=0;
+      endCard['static_duration']=5000;
+      endCard['interactive_duration']=10000;
+      endCard['countdown_timer_delay']=0;
+      endCard['show_countdown_timer']=true;
       
-      settings['end-card']=endCard;
+      settings['end_card']=endCard;
       
-      ret['ad-settings'] = settings;
+      ret['ad_settings'] = settings;
     }
     
     res.json(ret);

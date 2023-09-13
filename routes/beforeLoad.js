@@ -6,10 +6,10 @@ router.post('/', async function(req, res, next) {
     let body = req.body;
     let requestId = body["id"];
     
-    console.log('Receive click url for request ' + requestId); 
+    console.log('Receive before load url for request ' + requestId); 
     res.sendStatus(200);
   } catch (err) {
-    console.error(`Error while processing click url `, err.message);
+    console.error(`Error while processing before load url `, err.message);
     next(err);
   }
 });

@@ -9,6 +9,9 @@ const clickRouter = require("./routes/click");
 const impressionRouter = require("./routes/impression");
 const rewardedCompleteRouter = require("./routes/rewardedComplete");
 
+const beforeLoadRouter = require("./routes/beforeLoad");
+const afterLoadRouter = require("./routes/afterLoad");
+
 app.enable('trust proxy');
 
 app.use(express.json());
@@ -26,6 +29,9 @@ app.use("/ad", adRouter);
 app.use("/click", clickRouter);
 app.use("/impression", impressionRouter);
 app.use("/rewarded_complete", rewardedCompleteRouter);
+
+app.use("/before_load", beforeLoadRouter);
+app.use("/after_load", afterLoadRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

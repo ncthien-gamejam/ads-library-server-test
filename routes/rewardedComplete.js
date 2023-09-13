@@ -4,7 +4,7 @@ const router = express.Router();
 router.post('/', async function(req, res, next) {
   try {
     let body = req.body;
-    let requestId = body["request_id"];
+    let requestId = body["id"];
     
     console.log('Receive rewarded completion url for request ' + requestId); 
     res.sendStatus(200);
