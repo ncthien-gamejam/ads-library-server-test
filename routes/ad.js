@@ -248,7 +248,7 @@ router.post('/', async function(req, res, next) {
     let adResponses = [];
     adResponses.push(await createAdData(body, adFormat, adUnitId, baseUrl, requestId));
     
-    ret["ad_responses"] = adResponses;
+    ret["ads"] = adResponses;
     
     if (adFormat == "interstitial")
     {
