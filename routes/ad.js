@@ -46,9 +46,9 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   {
     if (adUnitId.toLowerCase().includes('mraid'))
     {
-      //filepath = './public/mraid/expand.html';
+      filepath = './public/mraid/expand.html';
       //filepath = './public/mraid/resize.html';
-      filepath = './public/mraid/twopart-expand-part1.html';
+      //filepath = './public/mraid/twopart-expand-part1.html';
       adType = 'mraid';
        
       width = 320;
@@ -69,8 +69,8 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   {
     if (adUnitId.toLowerCase().includes('mraid'))
     {
-      //filepath = './public/mraid/fullpage.html';
-      filepath = './public/mraid/interstitial.html';
+      filepath = './public/mraid/fullpage.html';
+      //filepath = './public/mraid/interstitial.html';
       adType = 'mraid';    
     }
     else
@@ -86,8 +86,16 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   }
   else if (adFormat === "rewarded_ad")
   {
-    filepath = './public/html/rewarded.html';
-    adType = 'html';
+    if (adUnitId.toLowerCase().includes('mraid'))
+    {
+      filepath = './public/mraid/interstitial.html';
+      adType = 'mraid';
+    }
+    else
+    {
+      filepath = './public/html/rewarded.html';
+      adType = 'html';
+    }
     
     width = requestBody['width'];
     height = requestBody['height'];
