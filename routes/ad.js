@@ -46,7 +46,8 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   {
     if (adUnitId.toLowerCase().includes('mraid'))
     {
-      filepath = './public/mraid/expand.html';
+      //filepath = './public/mraid/expand.html';
+      filepath = './public/mraid/resize.html';
       adType = 'mraid';
        
       width = 320;
