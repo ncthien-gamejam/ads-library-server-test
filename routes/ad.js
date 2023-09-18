@@ -67,7 +67,8 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   {
     if (adUnitId.toLowerCase().includes('mraid'))
     {
-      filepath = './public/mraid/fullpage.html';
+      //filepath = './public/mraid/fullpage.html';
+      filepath = './public/mraid/interstitial.html';
       adType = 'mraid';    
     }
     else
