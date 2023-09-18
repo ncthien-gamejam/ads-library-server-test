@@ -65,8 +65,16 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   }
   else if (adFormat === "interstitial")
   {
-    filepath = './public/html/interstitial.html';
-    adType = 'html';    
+    if (adUnitId.toLowerCase().includes('mraid'))
+    {
+      filepath = './public/mraid/fullpage.html';
+      adType = 'mraid';    
+    }
+    else
+    {
+      filepath = './public/html/interstitial.html';
+      adType = 'html';    
+    }
     
     width = requestBody['width'];
     height = requestBody['height'];
