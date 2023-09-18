@@ -38,6 +38,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   let orientation = requestBody['orientation'];
   
   let filepath = '';
+  let adType = '';
   
   let loadTimeout = 0;
   
@@ -46,6 +47,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
     if (adUnitId.toLowerCase().includes('mraid'))
     {
       filepath = './public/mraid/expand.html';
+      adType = 'mraid';
        
       width = 320;
       height = 50;
@@ -53,6 +55,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
     else
     {
       filepath = './public/html/banner.html';
+      adType = 'html';
       
       width = 320;
       height = 41;
@@ -63,6 +66,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   else if (adFormat === "interstitial")
   {
     filepath = './public/html/interstitial.html';
+    adType = 'html';    
     
     width = requestBody['width'];
     height = requestBody['height'];
@@ -72,14 +76,13 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   else if (adFormat === "rewarded_ad")
   {
     filepath = './public/html/rewarded.html';
+    adType = 'html';
     
     width = requestBody['width'];
     height = requestBody['height'];
     
     loadTimeout = 30000; //ms (30s)
   }
-  
-  let adType = 'html';
   
   let adGroupId = "AD_GROUP_ID_TEST";
   let creativeId = "CREATIVE_ID_TEST";
