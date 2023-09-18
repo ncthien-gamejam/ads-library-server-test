@@ -78,7 +78,7 @@ function twopart()
 		"allowOrientationChange": true
 	});
 	mraid.setExpandProperties({"width":200,"height":200,"isModal":false});//Setting this should have no effect. useCustomClose should still be true.
-	mraid.expand("http://mraid.iab.net/compliance/units/twopart-expand-part2.html"); //Change URL to test other pages
+	mraid.expand("https://ads-library-server-test.onrender.com/mraid/twopart-expand-part2.html"); //Change URL to test other pages
 }
 
 if(document.readyState=="complete")
