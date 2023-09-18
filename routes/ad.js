@@ -37,22 +37,32 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   
   let orientation = requestBody['orientation'];
   
-  let filename = '';
+  let filepath = '';
   
   let loadTimeout = 0;
   
   if (adFormat === "banner")
   {
-    filename = 'banner.html';
-    
-    width = 320;
-    height = 41;
+    if (adUnitId.toLowerCase().includes('mraid'))
+    {
+      filepath = './public/mraid/expand.html';
+       
+      width = 320;
+      height = 50;
+    }
+    else
+    {
+      filepath = './public/html/banner.html';
+      
+      width = 320;
+      height = 41;
+    }
     
     loadTimeout = 10000; //ms (10s)
   }
   else if (adFormat === "interstitial")
   {
-    filename = 'interstitial.html';
+    filepath = './public/html/interstitial.html';
     
     width = requestBody['width'];
     height = requestBody['height'];
@@ -61,7 +71,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   }
   else if (adFormat === "rewarded_ad")
   {
-    filename = 'rewarded.html';
+    filepath = './public/html/rewarded.html';
     
     width = requestBody['width'];
     height = requestBody['height'];
@@ -89,7 +99,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   
   let demandPartnerData = {'encrypted_cpm': 'test_cpm'};
  
-  const adData = await fsp.readFile('./data/' + filename);
+  const adData = await fsp.readFile(filepath);
   const adString = adData.toString();
   
   const adStringFinal = minify(adString, {
