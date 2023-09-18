@@ -50,7 +50,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
       adType = 'mraid';
        
       width = 320;
-      height = 50;
+      height = 100;
     }
     else
     {
