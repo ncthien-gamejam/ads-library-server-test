@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
 
-router.post('/', async function(req, res, next) {
+router.post('/:eventName', async function(req, res, next) {
   try {
-    console.log('Tracking path: ' + req.path);
+    console.log('Tracking event: ' + req.params.eventName);
     
     let body = req.body;
     console.log('Receive tracking: ' + JSON.stringify(body)); 
