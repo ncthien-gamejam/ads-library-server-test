@@ -1,16 +1,26 @@
-const express = require("express");
+import express from 'express';
 const app = express();
+
+import path from 'path';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3001;
 
-const adRouter = require("./routes/ad");
+import { router as adRouter } from './routes/ad.js';
 
-const clickRouter = require("./routes/click");
-const impressionRouter = require("./routes/impression");
-const rewardedCompleteRouter = require("./routes/rewardedComplete");
+import { router as clickRouter } from './routes/click.js';
+import { router as impressionRouter } from './routes/impression.js';
+import { router as rewardedCompleteRouter } from './routes/rewardedComplete.js';
 
-const beforeLoadRouter = require("./routes/beforeLoad");
-const afterLoadRouter = require("./routes/afterLoad");
+import { router as errorRouter } from './routes/error.js';
+
+import { router as trackingRouter } from './routes/tracking.js';
+
+import { router as beforeLoadRouter } from './routes/beforeLoad.js';
+import { router as afterLoadRouter } from './routes/afterLoad.js';
 
 app.enable('trust proxy');
 
@@ -31,6 +41,10 @@ app.use("/ad", adRouter);
 app.use("/click", clickRouter);
 app.use("/impression", impressionRouter);
 app.use("/rewarded_complete", rewardedCompleteRouter);
+
+app.use("/error", errorRouter);
+
+app.use("/tracking", trackingRouter);
 
 app.use("/before_load", beforeLoadRouter);
 app.use("/after_load", afterLoadRouter);

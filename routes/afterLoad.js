@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 router.post('/', async function(req, res, next) {
@@ -17,4 +17,4 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-module.exports = router;
+export { router }

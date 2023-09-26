@@ -1,9 +1,11 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-var fsp = require('fs/promises');
+import fsp from 'fs/promises';
 
-const minify = require("html-minifier").minify;
+import { minify as minifyHTML } from "html-minifier";
+
+import { minify as minifyXML } from "minify-xml";
 
 function createClickUrl(baseUrl, requestId)
 {
@@ -42,9 +44,11 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   
   let loadTimeout = 0;
   
+  let lowercaseAdUnitId = adUnitId.toLowerCase();
+  
   if (adFormat === "banner")
   {
-    if (adUnitId.toLowerCase().includes('mraid'))
+    if (lowercaseAdUnitId.includes('mraid'))
     {
       filepath = './public/mraid/expand.html';
       //filepath = './public/mraid/resize.html';
@@ -67,11 +71,16 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   }
   else if (adFormat === "interstitial")
   {
-    if (adUnitId.toLowerCase().includes('mraid'))
+    if (lowercaseAdUnitId.includes('mraid'))
     {
       //filepath = './public/mraid/fullpage.html';
       filepath = './public/mraid/interstitial.html';
       adType = 'mraid';    
+    }
+    else if (lowercaseAdUnitId.includes('vast'))
+    {
+      filepath = './public/vast/Inline_Linear_Tag-test.xml';
+      adType = 'vast';    
     }
     else
     {
@@ -86,7 +95,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   }
   else if (adFormat === "rewarded_ad")
   {
-    if (adUnitId.toLowerCase().includes('mraid'))
+    if (lowercaseAdUnitId.includes('mraid'))
     {
       filepath = './public/mraid/fullpage.html';
       adType = 'mraid';
@@ -122,13 +131,24 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   let demandPartnerData = {'encrypted_cpm': 'test_cpm'};
  
   const adData = await fsp.readFile(filepath);
-  const adString = adData.toString();
+  let adString = adData.toString();
   
-  const adStringFinal = minify(adString, {
-    collapseWhitespace: true,
-    removeComments: true,
-    minifyJS: true
-  });
+  if (filepath.includes('.html'))
+  {
+    adString = minifyHTML(adString, {
+      collapseWhitespace: true,
+      removeComments: true,
+      minifyJS: true
+    });
+  }
+  else if (filepath.includes('.xml'))
+  {
+    adString = minifyXML(adString, {
+      removeUnusedNamespaces: false,
+      removeUnusedDefaultNamespace: false,
+      shortenNamespaces : false
+    });
+  }
     
   let clickUrls = [createClickUrl(baseUrl, requestId)];
   let impressionUrls = [createImpressionUrl(baseUrl, requestId)];
@@ -245,7 +265,7 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
   
   let ret = {};
   
-  ret["content"] = adStringFinal;
+  ret["content"] = adString;
   ret["metadata"] = meta;
   
   return ret;
@@ -330,4 +350,4 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-module.exports = router;
+export { router }

@@ -3,13 +3,13 @@ const router = express.Router();
 
 router.post('/', async function(req, res, next) {
   try {
-    let body = req.body;
-    let requestId = body["id"];
+    console.log('Tracking path: ' + req.path);
     
-    console.log('Receive before load url for request ' + requestId); 
+    let body = req.body;
+    console.log('Receive tracking: ' + JSON.stringify(body)); 
     res.sendStatus(200);
   } catch (err) {
-    console.error(`Error while processing before load url `, err.message);
+    console.error(`Error while processing tracking url `, err.message);
     next(err);
   }
 });
