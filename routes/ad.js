@@ -81,7 +81,8 @@ async function createAdData(requestBody, adFormat, adUnitId, baseUrl, requestId)
     {
       //filepath = './public/vast/Inline_Linear_Tag-test.xml';
       //filepath = './public/vast/Video_Clicks_and_click_tracking-Inline-test.xml';
-      filepath = './public/vast/Inline_Companion_Tag-test.xml';
+      //filepath = './public/vast/Inline_Companion_Tag-test.xml';
+      filepath = './public/vast/Wrapper_Tag-test.xml';
       adType = 'vast';    
     }
     else
