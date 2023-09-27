@@ -22,6 +22,9 @@ import { router as trackingRouter } from './routes/tracking.js';
 import { router as beforeLoadRouter } from './routes/beforeLoad.js';
 import { router as afterLoadRouter } from './routes/afterLoad.js';
 
+import { router as omidVerifyRouter } from './routes/omidVerify.js';
+import { router as omidVerifyFailedRouter } from './routes/omidVerifyFailed.js';
+
 app.enable('trust proxy');
 
 app.use(express.static(__dirname + '/public'));
@@ -48,6 +51,9 @@ app.use("/tracking", trackingRouter);
 
 app.use("/before_load", beforeLoadRouter);
 app.use("/after_load", afterLoadRouter);
+
+app.use("/omid_verify", omidVerifyRouter);
+app.use("/omid_verify_failed", omidVerifyFailedRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

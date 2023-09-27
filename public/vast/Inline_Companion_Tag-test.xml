@@ -64,6 +64,21 @@
                     </total_available>
                 </Extension>
             </Extensions>
+            <AdVerifications>
+                <Verification vendor="dummyVendor">
+                    <JavaScriptResource apiFramework="omid" browserOptional="true">
+                        <![CDATA[https://ads-library-server-test.onrender.com/omid/omid-validation-verification-script-v1.js]]>
+                    </JavaScriptResource>
+                    <TrackingEvents>
+                        <Tracking event="verificationNotExecuted">
+                            <![CDATA[https://ads-library-server-test.onrender.com/omid_verify_failed?verr=[REASON]&tagtype=video&dvtagver=6.1.img&ctx=818052&cmp=DV064005&sid=123&plc=verificationRejection&advid=818053&crt=omidVerificationNotExecuted&vasttrkevt=impression&dvp_ctx=13337537&dvp_cmp=DV330341&dvp_sid=mopub&dvp_plc=Android-Video-VAST&dvp_advid=3819603&adsrv=189&DVP_PP_BUNDLE_ID=%25%25BUNDLE%25%25&DVP_PP_APP_ID=%25%25PLACEMENTID%25%25&DVP_PP_APP_NAME=%25%25APPNAME%25%25&DVP_MP_2=%25%25PUBID%25%25&DVP_MP_3=%25%25ADUNITID%25%25&DVP_MP_4=%25%25ADGROUPID%25%25&DVPX_PP_IMP_ID=%25%25REQUESTID%25%25&DVP_PP_AUCTION_IP=%25%25IPADDRESS%25%25&DVPX_PP_AUCTION_UA=%25%25USERAGENT%25%25&dup=70185121-e8c2-4962-bf0a-fb12e5679d9f&dvp_zjsver=0.20.9&dvp_vastetrk=1&sblk=1&dvp_sblkts=1588341149396&dvp_sblkst=err&dvp_vastv=4.0-r]]>
+                        </Tracking>
+                    </TrackingEvents>
+                    <VerificationParameters>
+                        <![CDATA[tagtype=video&dvtagver=6.1.src&msrapi=jsOmid&ctx=13337537&cmp=DV330341&sid=mopub&plc=Android-Video-VAST&advid=3819603&adsrv=189&DVP_PP_BUNDLE_ID=%25%25BUNDLE%25%25&DVP_PP_APP_ID=%25%25PLACEMENTID%25%25&DVP_PP_APP_NAME=%25%25APPNAME%25%25&DVP_MP_2=%25%25PUBID%25%25&DVP_MP_3=%25%25ADUNITID%25%25&DVP_MP_4=%25%25ADGROUPID%25%25&DVPX_PP_IMP_ID=%25%25REQUESTID%25%25&DVP_PP_AUCTION_IP=%25%25IPADDRESS%25%25&DVPX_PP_AUCTION_UA=%25%25USERAGENT%25%25&dup=70185121-e8c2-4962-bf0a-fb12e5679d9f&dvp_zjsver=0.20.9&dvp_vastetrk=1&sblk=1&dvp_sblkts=1588341149396&dvp_sblkst=err&dvp_vastv=4.0-r]]>
+                    </VerificationParameters>
+                </Verification>
+            </AdVerifications>
         </InLine>
     </Ad>
 </VAST>
